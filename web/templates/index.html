@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sentinel</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="top">
+    <h1>Sentinel</h1>
+    <p id="state" class="state">Connexion…</p>
+  </header>
+  <p id="banner" class="banner" hidden></p>
+
+  <section class="summary" aria-label="Résumé">
+    <div><span id="k-packets">0</span><small>paquets analysés</small></div>
+    <div><span id="k-rate">0</span><small>paquets par seconde</small></div>
+    <div><span id="k-high" class="sev-high">0</span><small>alertes critiques</small></div>
+    <div><span id="k-medium" class="sev-medium">0</span><small>alertes moyennes</small></div>
+  </section>
+
+  <div class="layout">
+    <main>
+      <nav class="tabs" role="tablist">
+        <button role="tab" class="active" data-tab="alerts">Alertes</button>
+        <button role="tab" data-tab="connections">Connexions</button>
+        <button role="tab" data-tab="scan">Analyser un fichier</button>
+        <button role="tab" data-tab="quarantine">Quarantaine</button>
+        <button role="tab" data-tab="interfaces">Interfaces</button>
+      </nav>
+
+      <section id="tab-alerts" class="panel">
+        <div class="panel-head">
+          <p class="muted">Les plus récentes en premier.</p>
+          <button id="clear" class="ghost">Effacer la liste</button>
+        </div>
+        <ol id="alerts" class="feed"></ol>
+        <p id="alerts-empty" class="empty">Aucune alerte pour l'instant. Sentinel surveille le trafic en continu.</p>
+      </section>
+
+      <section id="tab-connections" class="panel" hidden>
+        <table>
+          <thead><tr><th>Processus</th><th>Local</th><th>Distant</th><th>État</th></tr></thead>
+          <tbody id="conn-body"></tbody>
+        </table>
+      </section>
+
+      <section id="tab-scan" class="panel" hidden>
+        <form id="scan-form">
+          <label class="drop">
+            <input type="file" id="scan-file" required>
+            <span id="scan-label">Choisir un fichier à analyser</span>
+          </label>
+          <label class="check"><input type="checkbox" id="scan-quarantine"> Mettre en quarantaine si malveillant</label>
+          <button type="submit">Lancer l'analyse</button>
+        </form>
+        <p class="muted">Le fichier est analysé sans jamais être exécuté, puis supprimé du serveur.</p>
+        <div id="scan-result" hidden>
+          <h2 id="scan-verdict"></h2>
+          <dl id="scan-meta"></dl>
+          <ul id="scan-findings"></ul>
+        </div>
+      </section>
+
+      <section id="tab-quarantine" class="panel" hidden>
+        <table>
+          <thead><tr><th>Fichier</th><th>Verdict</th><th>SHA256</th><th></th></tr></thead>
+          <tbody id="q-body"></tbody>
+        </table>
+        <p id="q-empty" class="empty">Aucun fichier en quarantaine.</p>
+      </section>
+
+      <section id="tab-interfaces" class="panel" hidden>
+        <table>
+          <thead><tr><th>Interface</th><th>État</th><th>Adresses</th><th>Reçu</th><th>Envoyé</th></tr></thead>
+          <tbody id="if-body"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <aside>
+      <h2>Trafic</h2>
+      <canvas id="chart" height="140"></canvas>
+      <h2>Protocoles</h2>
+      <ul id="protos" class="protos"></ul>
+    </aside>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
